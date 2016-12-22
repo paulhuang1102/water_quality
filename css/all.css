@@ -355,6 +355,10 @@ h1 {
   color: #fff;
   height: 100px;
   text-shadow: 0.1em 0.1em 0.15em #000; }
+  @media (max-width: 414px) {
+    h1 {
+      padding-left: 30px;
+      font-size: 25px; } }
 
 .panel {
   display: none;
