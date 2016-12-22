@@ -2,15 +2,11 @@ var mouseX;
 var mouseY;
 var width = 800,
     height = 600;
-var dataset;
-var svg = d3.select("body").append("svg")
-    // .attr("class", "svgback")
-    .attr("width", width)
-    .attr("height", height);
-
+var data = [];
 $(document).ready(function() {
-    init();
     getData();
+    init();
+
 });
 
 var init = function() {
@@ -89,72 +85,111 @@ var init = function() {
         // $("path").mouseleave(function(e){
         //       $(".panel").fadeOut();
         // });
+        var result = " ";
+        
+        var cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>抽查時間</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>";
+        if ($(window).width() <= 415) {
+            cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>"
+            $("path").click(function() {
+                for (i = 0; i < data.length; i++) {
+                    if (data[i].County == $(this).attr("name")) {
+                        result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
+                    }
+                }
+                if (result === " ") {
+                    result = "查無結果";
+                }
+                $.colorbox({
+                    opacity: 0.85,
+                    width: "90%",
+                    html: cboxresult + result
+                });
 
+                result = " ";
+            })
+        } else {
+            $("path").click(function() {
+                var word = " ";
+                for (i = 0; i < data.length; i++) {
+                    word = word + data[i].County;
+                    if (data[i]['County'] == $(this).attr("name")) {
+                        result = result + "<table><tr><td>" + data[i]['County'] + "</td><td>" + data[i]['Test_Date'] + "</td><td>" + data[i]['Org_Tested'] + "</td><td>" + data[i]['Result'] + "</td><td>" + data[i]['Items_Tested'] + "</td><td>" + data[i]['Items_Failed'] + "</td><td>" + data[i]['Location_Tested'] + "</td></tr></table>"
+                    }
+                }
+                if (result === " ") {
+                    result = "查無結果";
+                }
+               
+                $.colorbox({
+                    opacity: 0.85,
+                    width: "70%",
+                    html: cboxresult + result
+                });
 
+                result = " ";
+            })
+        }
     });
 
 }
 
 var getData = function() {
-    $.ajax({
-        type: 'GET',
-        dataType: 'jsonp',
-        url: 'http://opendata.epa.gov.tw/ws/Data/WAT00068/?$orderby=Test_Date&$skip=0&$top=1000&format=json',
-        success: function(data) {
-            var result = " ";
-            var cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>抽查時間</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>";
-            if ($(window).width() <= 415) {
-                cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>"
-                $("path").click(function() {
-                    for (i = 0; i < data.length; i++) {
-                        if (data[i].County == $(this).attr("name")) {
 
-
-                            result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
-                        }
-                    }
-                    if (result === " ") {
-                        result = "查無結果";
-                    }
-
-                    if ($(window).width() <= 415) {
-                        cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>"
-                    }
-
-                    $.colorbox({
-                        opacity: 0.85,
-                        width: "90%",
-                        html: cboxresult + result
-                    });
-
-                    result = " ";
-                })
-            } else {
-                $("path").click(function() {
-                    for (i = 0; i < data.length; i++) {
-                        if (data[i].County == $(this).attr("name")) {
-                            result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Test_Date + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
-                            if ($(window).width() <= 415) {
-                                result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
-                            }
-                        }
-                    }
-                    if (result === " ") {
-                        result = "查無結果";
-                    }
-
-                    $.colorbox({
-                        opacity: 0.85,
-                        width: "70%",
-                        html: cboxresult + result
-                    });
-
-                    result = " ";
-                })
+    $.getJSON("water_test.json", function(json) {
+            for (i = 0; i < json.length; i++) {
+                data.push(json[i]);
             }
-        },
-        error: function() {
-            console.log('error!');
-        }
-    })
+
+        })
+        // $.ajax({
+        //     type: 'GET',
+        //     dataType: 'jsonp',
+        //     url: 'http://opendata.epa.gov.tw/ws/Data/WAT00068/?$orderby=Test_Date&$skip=0&$top=1000&format=json',
+        //     success: function(data) {
+        //         var result = " ";
+        //         var cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>抽查時間</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>";
+        //         if ($(window).width() <= 415) {
+        //             cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>"
+        //             $("path").click(function() {
+        //                 for (i = 0; i < data.length; i++) {
+        //                     if (data[i].County == $(this).attr("name")) {
+        //                         result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
+        //                     }
+        //                 }
+        //                 if (result === " ") {
+        //                     result = "查無結果";
+        //                 }
+        //                 $.colorbox({
+        //                     opacity: 0.85,
+        //                     width: "90%",
+        //                     html: cboxresult + result
+        //                 });
+
+    //                 result = " ";
+    //             })
+    //         } else {
+    //             $("path").click(function() {
+    //                 for (i = 0; i < data.length; i++) {
+    //                     if (data[i].County == $(this).attr("name")) {
+    //                         result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Test_Date + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
+    //                     }
+    //                 }
+    //                 if (result === " ") {
+    //                     result = "查無結果";
+    //                 }
+
+    //                 $.colorbox({
+    //                     opacity: 0.85,
+    //                     width: "70%",
+    //                     html: cboxresult + result
+    //                 });
+
+    //                 result = " ";
+    //             })
+    //         }
+    //     },
+    //     error: function() {
+    //         console.log('error!');
+    //     }
+    // })
 }
