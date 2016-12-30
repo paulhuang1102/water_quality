@@ -72,17 +72,12 @@ var init = function() {
         });
         // panel 隨滑鼠移動
         $("path").mouseover(function(e) {
-            var adjustX = 100;
-            if ($(window).width() <= 415) {
-                adjustX = 50;
-            }
-
+      
             if ($('.countyname').is(':visible')) {
                 $('.countyname').css({
-                    'top': e.pageY - 200,
-                    'left': e.pageX - adjustX
+                    'top': e.pageY,
+                    'left': e.pageX 
                 });
-                console.log(e.pageY);
             } else {
                 $('.countyname').fadeIn('slow');
             }
