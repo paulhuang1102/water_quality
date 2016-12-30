@@ -11,13 +11,13 @@ $(document).ready(function() {
 
 var init = function() {
     var Cname = 'C_Name';
-    var svg = d3.select(".wrap").append("svg")
+    var svg = d3.select(".taiwan").append("svg")
         // .attr("class", "svgback")
         .attr("width", width)
         .attr("height", height);
     var projection = d3.geo.mercator()
-        .center([121, 24])
-        .scale(8000);
+        .center([121.5, 24])
+        .scale(7000);
 
     if ($(window).width() <= 767) {
         projection = d3.geo.mercator().center([121.5, 24]).scale(7000);
@@ -62,7 +62,7 @@ var init = function() {
             $(this).attr("fill", '#000088');
 
             $('.title').html($(this).attr("name"));
-            $('.panel').css({
+            $('.countyname').css({
                 "height": "20px",
                 "width": "60px",
                 "position": "absolute"
@@ -72,14 +72,19 @@ var init = function() {
         });
         // panel 隨滑鼠移動
         $("path").mouseover(function(e) {
+            var adjustX = 100;
+            if ($(window).width() <= 415) {
+                adjustX = 50;
+            }
 
-            if ($('.panel').is(':visible')) {
-                $('.panel').css({
-                    'top': e.pageY,
-                    'left': e.pageX
+            if ($('.countyname').is(':visible')) {
+                $('.countyname').css({
+                    'top': e.pageY - 200,
+                    'left': e.pageX - adjustX
                 });
+                console.log(e.pageY);
             } else {
-                $('.panel').fadeIn('slow');
+                $('.countyname').fadeIn('slow');
             }
         });
         // $("path").mouseleave(function(e){
@@ -87,22 +92,22 @@ var init = function() {
         // });
         var result = " ";
         
-        var cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>抽查時間</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>";
+        var cboxresult = "<tr class='info'><td>地區</td><td>抽查時間</td><td>受檢驗機構</td><td>抽驗結果</td><td>不合格項目</td><td>水源地</td></tr>";
         if ($(window).width() <= 415) {
-            cboxresult = "<table><caption>查詢結果</caption><tr><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr></table>"
+            cboxresult = "<tr class='info'><td>地區</td><td>受檢驗機構</td><td>抽驗結果</td><td>檢驗項目</td><td>不合格項目</td><td>水源地</td></tr>"
             $("path").click(function() {
                 for (i = 0; i < data.length; i++) {
                     if (data[i].County == $(this).attr("name")) {
-                        result = result + "<table><tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr></table>"
+                        result = result + "<tr><td>" + data[i].County + "</td><td>" + data[i].Org_Tested + "</td><td>" + data[i].Result + "</td><td>" + data[i].Items_Tested + "</td><td>" + data[i].Items_Failed + "</td><td>" + data[i].Location_Tested + "</td></tr>"
                     }
                 }
                 if (result === " ") {
-                    result = "查無結果";
+                    result = "<tr><td>查無結果</td></tr>";
                 }
                 $.colorbox({
                     opacity: 0.85,
                     width: "90%",
-                    html: cboxresult + result
+                    html: "<table class='table'>" + cboxresult + result + "</table>"
                 });
 
                 result = " ";
@@ -113,19 +118,15 @@ var init = function() {
                 for (i = 0; i < data.length; i++) {
                     word = word + data[i].County;
                     if (data[i]['County'] == $(this).attr("name")) {
-                        result = result + "<table><tr><td>" + data[i]['County'] + "</td><td>" + data[i]['Test_Date'] + "</td><td>" + data[i]['Org_Tested'] + "</td><td>" + data[i]['Result'] + "</td><td>" + data[i]['Items_Tested'] + "</td><td>" + data[i]['Items_Failed'] + "</td><td>" + data[i]['Location_Tested'] + "</td></tr></table>"
+                        result = result + "<tr><td>" + data[i]['County'] + "</td><td>" + data[i]['Test_Date'] + "</td><td>" + data[i]['Org_Tested'] + "</td><td>" + data[i]['Result'] + "</td><td>" + data[i]['Items_Failed'] + "</td><td>" + data[i]['Location_Tested'] + "</td></tr>"
                     }
                 }
                 if (result === " ") {
-                    result = "查無結果";
+                    result = "<tr><td>查無結果</td></tr>";
                 }
-               
-                $.colorbox({
-                    opacity: 0.85,
-                    width: "70%",
-                    html: cboxresult + result
-                });
-
+                $('.result').empty();
+               $('.result').append("<table class='table'>"+cboxresult+result+"</table>");
+                
                 result = " ";
             })
         }
