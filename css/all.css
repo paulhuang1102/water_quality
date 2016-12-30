@@ -514,30 +514,6 @@ ul li {
     list-style: none;
 }
 
-.taiwan{
-  position: relative;
-}
-
-@media(max-width: 1200px){
-    .col-md-6{
-    width: 100%;
-  }
-}
-
-@media(min-width: 992px){
-    .col-md-6{
-    width: 100%;
-  }
-}
-
-@media(min-width: 1200px){
-    .col-md-6{
-    width: 50%;
-  }
-}
-
-
-
 .jumbotron{
   background-color: #CCEEFF;
   word-break:break-all 
@@ -557,13 +533,22 @@ svg {
     padding-left: 10px;
 }
 
+.result{
+  position: absolute;
+  top: 250px;
+  right: 5%;
+}
+
+@media (max-width:1500px ) {
+  .result{
+    position: static;
+  }
+}
+
 table {
     
     font-family: 微軟正黑體;
 }
-
-
-
 
 
 .subunit-boundary {
